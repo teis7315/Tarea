@@ -1,4 +1,4 @@
-package artistas;
+package modelo.artistas;
 
 import enums.CategoriaPodcast;
 

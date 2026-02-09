@@ -2,6 +2,7 @@ package modelo.usuarios;
 
 import enums.TipoSuscripcion;
 import excepciones.usuario.EmailInvalidoException;
+import modelo.contenido.Contenido;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,24 +18,20 @@ public abstract class Usuario {
     protected Date fechaRegistro;
 
     public abstract void reproducir(Contenido contenido);
-    public void crearPlaylist(String nombre){
+
+    public void crearPlaylist(String nombre) {
 
     }
-    public void darLike(Contenido contenido){
+
+    public void darLike(Contenido contenido) {
         contenido.likes++;
     }
-    public void validarEmail() throws EmailInvalidoException(){
+
+    public void validarEmail() throws EmailInvalidoException()
+
+    {
 
 
-        }
+    }
 
-    }
-    public void validarPassword(){
-    if(password.length()<8){
-        throw PasswordDebilException("Contraseña debil");
-    }
-    }
-    public void agregarAlHistorial(Contenido contenido){
-        historial.add(contenido);
-    }
 }
