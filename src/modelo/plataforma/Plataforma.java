@@ -117,6 +117,10 @@ public class Plataforma {
         return usuariosPorEmail.get(email);
     }
 
+    public String getNombre() {
+        return "";
+    }
+
     // ====================== Artistas, Álbumes, Canciones, Creadores, Playlists, Búsquedas ======================
     // (kept unchanged)
     // ...
