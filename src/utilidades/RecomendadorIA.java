@@ -115,6 +115,20 @@ public class RecomendadorIA implements Recomendador {
         return (double) coincidencias / Math.max(preferencias.size(), etiquetas.size());
     }
 
+    // ===== NUEVO MÉTODO PARA PASAR EL TEST =====
+    public ArrayList<String> obtenerGenerosPopulares() {
+        HashMap<String, Integer> contador = new HashMap<>();
+        for (ArrayList<String> prefs : matrizPreferencias.values()) {
+            for (String g : prefs) {
+                contador.put(g, contador.getOrDefault(g, 0) + 1);
+            }
+        }
+
+        ArrayList<String> populares = new ArrayList<>(contador.keySet());
+        populares.sort((a, b) -> Integer.compare(contador.get(b), contador.get(a)));
+        return populares;
+    }
+
     // Getters y Setters
     public AlgoritmoRecomendacion getAlgoritmo() { return algoritmo; }
     public void setAlgoritmo(AlgoritmoRecomendacion algoritmo) { this.algoritmo = algoritmo; }
