@@ -25,8 +25,6 @@ public enum CriterioOrden {
 
     @Override
     public String toString() {
-        return "CriterioOrden{" +
-                "nombre='" + nombre + '\'' +
-                '}';
+        return nombre;
     }
 }

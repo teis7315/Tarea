@@ -23,8 +23,6 @@ public enum TipoAnuncion {
 
     @Override
     public String toString() {
-        return "TipoAnuncion{" +
-                "duracionSegundos=" + duracionSegundos +
-                '}';
+        return this.name() + " (" + duracionSegundos + "s)";
     }
 }

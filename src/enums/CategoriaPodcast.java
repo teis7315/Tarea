@@ -32,8 +32,6 @@ public enum CategoriaPodcast {
 
     @Override
     public String toString() {
-        return "CategoriaPodcast{" +
-                "nombre='" + nombre + '\'' +
-                '}';
+        return nombre;
     }
 }

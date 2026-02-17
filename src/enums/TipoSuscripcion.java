@@ -1,29 +1,29 @@
 package enums;
 
 public enum TipoSuscripcion {
-    GRATUITO(0.0,false,50,false),
-    PREMIUM(9.99, true,-1,true),
-    FAMILIAR(14.99,true,-1,true),
-    ESTUDIANTE(4.99,true,-1,true);
+    GRATUITO(0.0, false, 50, false),
+    PREMIUM(9.99, true, -1, true),
+    FAMILIAR(14.99, true, -1, true),
+    ESTUDIANTE(4.99, true, -1, true);
 
     private double precioMensual;
     private boolean sinAnuncios;
     private int limiteReproducciones;
-    private boolean descargaOffline;
+    private boolean descargasOffline;
 
-    TipoSuscripcion(double precioMensual, boolean sinAnuncios, int limiteReproducciones, boolean descargaOffline) {
+    TipoSuscripcion(double precioMensual, boolean sinAnuncios, int limiteReproducciones, boolean descargasOffline) {
         this.precioMensual = precioMensual;
         this.sinAnuncios = sinAnuncios;
         this.limiteReproducciones = limiteReproducciones;
-        this.descargaOffline = descargaOffline;
+        this.descargasOffline = descargasOffline;
     }
 
     public double getPrecioMensual() {
         return precioMensual;
     }
 
-    public boolean isDescargaOffline() {
-        return descargaOffline;
+    public boolean isDescargasOffline() {
+        return descargasOffline;
     }
 
     public int getLimiteReproducciones() {
@@ -33,14 +33,13 @@ public enum TipoSuscripcion {
     public boolean isSinAnuncios() {
         return sinAnuncios;
     }
-    boolean tieneReproduccionesIlimitadas(){
+
+    public boolean tieneReproduccionesIlimitadas() {
         return limiteReproducciones == -1;
     }
 
     @Override
     public String toString() {
-        return "TipoSuscripcion{" +
-                "precioMensual=" + precioMensual +
-                '}';
+        return this.name() + " - $" + precioMensual;
     }
 }

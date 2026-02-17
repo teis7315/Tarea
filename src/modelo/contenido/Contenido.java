@@ -35,7 +35,7 @@ public abstract class Contenido {
     public abstract void reproducir() throws ContenidoNoDisponibleException;
     //fallo if disponible==false en hijo
 
-    public void aumentarReproduciones(){
+    public void aumentarReproducciones(){
         reproducciones++;
     }
     public void agregarLike(){
@@ -51,23 +51,27 @@ public abstract class Contenido {
             throw new DuracionInvalidaException();
         }
     }
-    public void agregarTag(String tag){
-        tags.add(tag);
+    public void agregarTag(String tag) {
+        if (tag != null && !tags.contains(tag)) {
+            tags.add(tag);
+        }
     }
-    public boolean tieneTag(String tag){
+
+    public boolean tieneTag(String tag) {
         return tags.contains(tag);
     }
-    public void marcarNoDisponible(){
+
+    public void marcarNoDisponible() {
         disponible = false;
     }
-    public void marcarDisponible(){
-        disponible=true;
+
+    public void marcarDisponible() {
+        disponible = true;
     }
 
     public String getDuracionFormateada() {
         int minutos = duracionSegundos / 60;
         int segundos = duracionSegundos % 60;
-
         return String.format("%d:%02d", minutos, segundos);
     }
 
@@ -79,8 +83,16 @@ public abstract class Contenido {
         return titulo;
     }
 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
     public int getReproducciones() {
         return reproducciones;
+    }
+
+    public void setReproducciones(int reproducciones) {
+        this.reproducciones = reproducciones;
     }
 
     public int getLikes() {
@@ -92,23 +104,19 @@ public abstract class Contenido {
     }
 
     public ArrayList<String> getTags() {
-        return tags;
+        return new ArrayList<>(tags);
     }
 
     public boolean isDisponible() {
         return disponible;
     }
 
+    public Date getFechaPublicacion() {
+        return fechaPublicacion;
+    }
+
     public void setFechaPublicacion(Date fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
-    }
-
-    public void setReproducciones(int reproducciones) {
-        this.reproducciones = reproducciones;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
     }
     @Override
     public String toString(){return titulo+" ["+getDuracionFormateada()+"]";}

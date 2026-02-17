@@ -34,8 +34,6 @@ public enum GeneroMusical {
 
     @Override
     public String toString() {
-        return "GeneroMusical{" +
-                "nombre='" + nombre + '\'' +
-                '}';
+        return nombre;
     }
 }

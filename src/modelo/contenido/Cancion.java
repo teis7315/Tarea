@@ -1,129 +1,191 @@
 package modelo.contenido;
 
 import enums.GeneroMusical;
+import excepciones.contenido.ArchivoDeAudioNoEncontradoException;
 import excepciones.contenido.ContenidoNoDisponibleException;
 import excepciones.contenido.DuracionInvalidaException;
+import excepciones.contenido.LetraNoDisponibleException;
 import excepciones.descarga.ContenidoYaDescargadoException;
-import excepciones.descarga.LimiteDescargasException;
 import interfaces.Descargable;
 import interfaces.Reproducible;
+import modelo.artistas.Album;
+import modelo.artistas.Artista;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class Cancion extends Contenido implements Reproducible, Descargable {
     private String letra;
-    Artista artista;
-    Album album;
-    GeneroMusical genero;
-    String audioURL;
-    boolean explicit;
-    String ISRC;
-    boolean reproduciendo;
-    boolean pausado;
-    boolean descargado;
+    private modelo.artistas.Artista artista;
+    private modelo.artistas.Album album;
+    private GeneroMusical genero;
+    private String audioURL;
+    private boolean explicit;
+    private String ISRC;
+    private boolean reproduciendo;
+    private boolean pausado;
+    private boolean descargado;
 
-    public Cancion(String titulo, int duracionSegundos, Artista artista, GeneroMusical genero) throws DuracionInvalidaException {
+    public Cancion(String titulo, int duracionSegundos, modelo.artistas.Artista artista, GeneroMusical genero)
+            throws DuracionInvalidaException {
         super(titulo, duracionSegundos);
         this.artista = artista;
         this.genero = genero;
-        this.audioURL = "https://sounwave.com/audio/"+id+".mp3";
-        this.ISRC = UUID.randomUUID().toString(); ;
+        this.audioURL = "https://soundwave.com/audio/" + id + ".mp3";
+        this.ISRC = generarISRC();
         this.reproduciendo = false;
         this.pausado = false;
         this.descargado = false;
+        this.explicit = false;
+        this.letra = "";
     }
-    public Cancion(String titulo, int duracionSegundos, Artista artista, GeneroMusical genero, boolean explicit, String letra) throws DuracionInvalidaException {
+
+    public Cancion(String titulo, int duracionSegundos, modelo.artistas.Artista artista, GeneroMusical genero,
+                   String letra, boolean explicit) throws DuracionInvalidaException {
         super(titulo, duracionSegundos);
         this.artista = artista;
         this.genero = genero;
-        this.audioURL = "https://sounwave.com/audio/"+id+".mp3";
-        this.ISRC = UUID.randomUUID().toString();
+        this.audioURL = "https://soundwave.com/audio/" + id + ".mp3";
+        this.ISRC = generarISRC();
         this.reproduciendo = false;
         this.pausado = false;
         this.descargado = false;
         this.explicit = explicit;
         this.letra = letra;
     }
-    private String generarISRC(){
+
+    private String generarISRC() {
         return UUID.randomUUID().toString();
-    }
-    @Override
-    public void reproducir() throws ContenidoNoDisponibleException {
-        if(disponible){
-            reproduciendo=true;
-            reproducciones++;
-        }else{
-            throw new ContenidoNoDisponibleException();
-        }
     }
 
     @Override
-    public void play() {
-        reproduciendo=true;
-        pausado=false;
-        System.out.println(artista+" - "+id+" - "+album);
+    public void reproducir() throws ContenidoNoDisponibleException {
+        if (!disponible) {
+            throw new ContenidoNoDisponibleException("La canción no está disponible");
+        }
+        reproduciendo = true;
+        reproducciones++;
+    }
+
+    @Override
+    public void play() throws ContenidoNoDisponibleException {
+        reproducir();
+        reproduciendo = true;
+        pausado = false;
+        System.out.println("Reproduciendo: " + artista.getNombreArtistico() + " - " + titulo);
     }
 
     @Override
     public void pause() {
-        if(reproduciendo){
-        pausado=true;
+        if (reproduciendo) {
+            pausado = true;
         }
     }
 
     @Override
     public void stop() {
-        reproduciendo=false;
-        pausado=false;
+        reproduciendo = false;
+        pausado = false;
     }
 
     @Override
-    public int getDuration() {
+    public int getDuracion() {
         return duracionSegundos;
     }
 
     @Override
-    public boolean descargar() throws LimiteDescargasException, ContenidoYaDescargadoException {
-        if(!descargado){
-            descargado=true;
-        }else{
-            throw new ContenidoYaDescargadoException();
+    public boolean descargar() throws ContenidoYaDescargadoException {
+        if (descargado) {
+            throw new ContenidoYaDescargadoException("La canción ya está descargada");
         }
-        //LIMITE  DESCARGAS?
+        descargado = true;
+        return true;
     }
 
     @Override
-    public boolean eliminarDescargar() {
-        descargado=false;
+    public boolean eliminarDescarga() {
+        if (descargado) {
+            descargado = false;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public int expacioRequerido() {
-        return 0;//duracion-->mb?
+    public int espacioRequerido() {
+        // Aproximadamente 1MB por minuto de audio a 128kbps
+        int minutos = duracionSegundos / 60;
+        return minutos > 0 ? minutos : 1;
     }
 
+    public String obtenerLetra() throws LetraNoDisponibleException {
+        if (letra == null || letra.isEmpty()) {
+            throw new LetraNoDisponibleException("La letra no está disponible para esta canción");
+        }
+        return letra;
+    }
+
+    public boolean esExplicit() {
+        return explicit;
+    }
+
+    public void cambiarGenero(GeneroMusical nuevoGenero) {
+        this.genero = nuevoGenero;
+    }
+
+    public void validarAudioURL() throws ArchivoDeAudioNoEncontradoException {
+        if (audioURL == null || audioURL.isEmpty()) {
+            throw new ArchivoDeAudioNoEncontradoException("URL de audio no encontrada");
+        }
+    }
+
+    // Getters y Setters
     public String getLetra() {
         return letra;
     }
 
-    public Artista getArtista() {
+    public void setLetra(String letra) {
+        this.letra = letra;
+    }
+
+    public modelo.artistas.Artista getArtista() {
         return artista;
     }
 
-    public Album getAlbum() {
+    public void setArtista(modelo.artistas.Artista artista) {
+        this.artista = artista;
+    }
+
+    public modelo.artistas.Album getAlbum() {
         return album;
+    }
+
+    public void setAlbum(modelo.artistas.Album album) {
+        this.album = album;
     }
 
     public GeneroMusical getGenero() {
         return genero;
     }
 
+    public void setGenero(GeneroMusical genero) {
+        this.genero = genero;
+    }
+
     public String getAudioURL() {
         return audioURL;
     }
 
+    public void setAudioURL(String audioURL) {
+        this.audioURL = audioURL;
+    }
+
     public boolean isExplicit() {
         return explicit;
+    }
+
+    public void setExplicit(boolean explicit) {
+        this.explicit = explicit;
     }
 
     public String getISRC() {
@@ -142,39 +204,12 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
         return descargado;
     }
 
-    public void setLetra(String letra) {
-        this.letra = letra;
-    }
-
-    public void setArtista(Artista artista) {
-        this.artista = artista;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
-    }
-
-    public void setGenero(GeneroMusical genero) {
-        this.genero = genero;
-    }
-
-    public void setAudioURL(String audioURL) {
-        this.audioURL = audioURL;
-    }
-
-    public void setExplicit(boolean explicit) {
-        this.explicit = explicit;
-    }
-
     public void setDescargado(boolean descargado) {
         this.descargado = descargado;
     }
 
     @Override
     public String toString() {
-        return "Cancion{" +
-                "artista=" + artista +
-                ", duracionSegundos=" + duracionSegundos +
-                '}';
+        return titulo + " - " + artista.getNombreArtistico() + " [" + getDuracionFormateada() + "]";
     }
 }
