@@ -216,4 +216,12 @@ public class Podcast extends Contenido implements Reproducible, Descargable {
         return "Podcast{" + "titulo='" + titulo + '\'' + ", numeroEpisodio=" + numeroEpisodio +
                ", temporada=" + temporada + ", categoria=" + categoria + '}';
     }
+    @Override
+    public ArrayList<String> getEtiquetas() {
+        ArrayList<String> etiquetas = new ArrayList<>(super.getEtiquetas());
+        etiquetas.add(categoria.name()); // agrega la categoría del podcast
+        return etiquetas;
+    }
+
+
 }

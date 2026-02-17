@@ -11,6 +11,7 @@ import interfaces.Reproducible;
 import modelo.artistas.Album;
 import modelo.artistas.Artista;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -212,4 +213,11 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
     public String toString() {
         return titulo + " - " + artista.getNombreArtistico() + " [" + getDuracionFormateada() + "]";
     }
+    @Override
+    public ArrayList<String> getEtiquetas() {
+        ArrayList<String> etiquetas = new ArrayList<>(super.getEtiquetas());
+        etiquetas.add(genero.name()); // agrega el género musical como etiqueta
+        return etiquetas;
+    }
+
 }

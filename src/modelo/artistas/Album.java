@@ -201,4 +201,7 @@ public class Album {
     public int hashCode() {
         return id.hashCode();
     }
+
+    public Cancion agregarCancion(String titulo, int duracion, Artista artista, GeneroMusical genero) {
+    }
 }

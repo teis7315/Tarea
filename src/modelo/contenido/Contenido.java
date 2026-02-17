@@ -129,4 +129,7 @@ public abstract class Contenido {
     }
     @Override
     public int hashCode(){return id.hashCode();}
+    public ArrayList<String> getEtiquetas() {
+        return new ArrayList<>(tags); // copia defensiva
+    }
 }

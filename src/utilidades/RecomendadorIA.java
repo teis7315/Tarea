@@ -3,9 +3,7 @@ package utilidades;
 import enums.AlgoritmoRecomendacion;
 import interfaces.Recomendador;
 import excepciones.recomendacion.RecomendacionException;
-import modelo.contenido.Cancion;
 import modelo.contenido.Contenido;
-import modelo.contenido.Podcast;
 import modelo.usuarios.Usuario;
 
 import java.util.ArrayList;
@@ -38,16 +36,11 @@ public class RecomendadorIA implements Recomendador {
 
     @Override
     public ArrayList<Contenido> recomendar(Usuario usuario) throws RecomendacionException {
-        if (!modeloEntrenado) {
-            throw new RecomendacionException("Modelo no entrenado");
-        }
-        if (usuario.getHistorial().isEmpty()) {
-            throw new RecomendacionException("Usuario no tiene historial suficiente");
-        }
+        if (!modeloEntrenado) throw new RecomendacionException("Modelo no entrenado");
+        if (usuario.getHistorial().isEmpty()) throw new RecomendacionException("Usuario no tiene historial suficiente");
 
         ArrayList<Contenido> recomendaciones = new ArrayList<>();
-        ArrayList<String> preferencias = matrizPreferencias.get(usuario.getId());
-        if (preferencias == null) preferencias = new ArrayList<>();
+        ArrayList<String> preferencias = matrizPreferencias.getOrDefault(usuario.getId(), new ArrayList<>());
 
         for (Contenido c : catalogoReferencia) {
             if (!usuario.getHistorial().contains(c) && calcularSimilitudContenido(c, preferencias) >= umbralSimilitud) {
@@ -60,15 +53,13 @@ public class RecomendadorIA implements Recomendador {
 
     @Override
     public ArrayList<Contenido> obtenerSimilares(Contenido contenido) throws RecomendacionException {
-        if (!modeloEntrenado) {
-            throw new RecomendacionException("Modelo no entrenado");
-        }
+        if (!modeloEntrenado) throw new RecomendacionException("Modelo no entrenado");
 
         ArrayList<Contenido> similares = new ArrayList<>();
-        ArrayList<String> preferencias = contenidoToPreferencias(contenido);
+        ArrayList<String> etiquetasContenido = contenido.getEtiquetas();
 
         for (Contenido c : catalogoReferencia) {
-            if (c != contenido && calcularSimilitudContenido(c, preferencias) >= umbralSimilitud) {
+            if (c != contenido && calcularSimilitudContenido(c, etiquetasContenido) >= umbralSimilitud) {
                 similares.add(c);
             }
         }
@@ -94,10 +85,10 @@ public class RecomendadorIA implements Recomendador {
     }
 
     public double calcularSimilitud(Usuario u1, Usuario u2) {
-        ArrayList<String> prefs1 = matrizPreferencias.get(u1.getId());
-        ArrayList<String> prefs2 = matrizPreferencias.get(u2.getId());
+        ArrayList<String> prefs1 = matrizPreferencias.getOrDefault(u1.getId(), new ArrayList<>());
+        ArrayList<String> prefs2 = matrizPreferencias.getOrDefault(u2.getId(), new ArrayList<>());
 
-        if (prefs1 == null || prefs2 == null || prefs1.isEmpty() || prefs2.isEmpty()) return 0.0;
+        if (prefs1.isEmpty() || prefs2.isEmpty()) return 0.0;
 
         int coincidencias = 0;
         for (String g : prefs1) if (prefs2.contains(g)) coincidencias++;
@@ -107,52 +98,31 @@ public class RecomendadorIA implements Recomendador {
     public void actualizarPreferencias(Usuario usuario) {
         ArrayList<String> prefs = new ArrayList<>();
         for (Contenido c : usuario.getHistorial()) {
-            for (String tag : contenidoToPreferencias(c)) {
+            for (String tag : c.getEtiquetas()) {
                 if (!prefs.contains(tag)) prefs.add(tag);
             }
         }
         matrizPreferencias.put(usuario.getId(), prefs);
     }
 
-    private ArrayList<String> contenidoToPreferencias(Contenido c) {
-        ArrayList<String> prefs = new ArrayList<>();
-        if (c instanceof Cancion cancion) {
-            prefs.add(cancion.getGenero().name());
-        } else if (c instanceof Podcast podcast) {
-            prefs.add(podcast.getCategoria().name());
-        }
-        return prefs;
-    }
-
     private double calcularSimilitudContenido(Contenido contenido, ArrayList<String> preferencias) {
         if (preferencias == null || preferencias.isEmpty()) return 0.0;
+        ArrayList<String> etiquetas = contenido.getEtiquetas();
+        if (etiquetas.isEmpty()) return 0.0;
+
         int coincidencias = 0;
-        for (String pref : contenidoToPreferencias(contenido)) {
-            if (preferencias.contains(pref)) coincidencias++;
-        }
-        return (double) coincidencias / Math.max(preferencias.size(), contenidoToPreferencias(contenido).size());
+        for (String e : etiquetas) if (preferencias.contains(e)) coincidencias++;
+        return (double) coincidencias / Math.max(preferencias.size(), etiquetas.size());
     }
 
     // Getters y Setters
-    public AlgoritmoRecomendacion getAlgoritmo() {
-        return algoritmo;
-    }
+    public AlgoritmoRecomendacion getAlgoritmo() { return algoritmo; }
+    public void setAlgoritmo(AlgoritmoRecomendacion algoritmo) { this.algoritmo = algoritmo; }
 
-    public void setAlgoritmo(AlgoritmoRecomendacion algoritmo) {
-        this.algoritmo = algoritmo;
-    }
+    public double getUmbralSimilitud() { return umbralSimilitud; }
+    public void setUmbralSimilitud(double umbralSimilitud) { this.umbralSimilitud = umbralSimilitud; }
 
-    public double getUmbralSimilitud() {
-        return umbralSimilitud;
-    }
-
-    public void setUmbralSimilitud(double umbralSimilitud) {
-        this.umbralSimilitud = umbralSimilitud;
-    }
-
-    public boolean isModeloEntrenado() {
-        return modeloEntrenado;
-    }
+    public boolean isModeloEntrenado() { return modeloEntrenado; }
 
     public HashMap<String, ArrayList<String>> getMatrizPreferencias() {
         HashMap<String, ArrayList<String>> copia = new HashMap<>();
@@ -162,7 +132,5 @@ public class RecomendadorIA implements Recomendador {
         return copia;
     }
 
-    public void setCatalogoReferencia(ArrayList<Contenido> catalogo) {
-        this.catalogoReferencia = new ArrayList<>(catalogo);
-    }
+    public void setCatalogoReferencia(ArrayList<Contenido> catalogo) { this.catalogoReferencia = new ArrayList<>(catalogo); }
 }
