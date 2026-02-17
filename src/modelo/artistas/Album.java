@@ -67,6 +67,12 @@ public class Album {
         return cancion;
     }
 
+    // ===== Corregido para compatibilidad con tests =====
+    public Cancion agregarCancion(String titulo, int duracion, Artista artista, GeneroMusical genero)
+            throws AlbumCompletoException, DuracionInvalidaException {
+        return crearCancion(titulo, duracion, genero);
+    }
+
     public void eliminarCancion(int posicion) throws CancionNoEncontradaException {
         if (posicion < 1 || posicion > canciones.size()) {
             throw new CancionNoEncontradaException("Posición " + posicion + " no válida");
@@ -120,12 +126,6 @@ public class Album {
             total += c.getReproducciones();
         }
         return total;
-    }
-
-    // ===== Nuevo método corregido para pasar tests =====
-    public Cancion agregarCancion(String titulo, int duracion, Artista artista, GeneroMusical genero)
-            throws AlbumCompletoException, DuracionInvalidaException {
-        return crearCancion(titulo, duracion, genero);
     }
 
     // Getters y Setters
