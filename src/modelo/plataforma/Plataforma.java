@@ -62,6 +62,15 @@ public class Plataforma {
         instancia = null;
     }
 
+    // ====================== Plataforma Info ======================
+    public String getNombre() {
+        return nombre;
+    }
+
+    public ArrayList<Anuncio> getAnuncios() {
+        return new ArrayList<>(anuncios);
+    }
+
     // ====================== Usuarios ======================
     public UsuarioPremium registrarUsuarioPremium(String nombre, String email, String password, TipoSuscripcion tipo)
             throws UsuarioYaExisteException, EmailInvalidoException, PasswordDebilException {
@@ -131,6 +140,10 @@ public class Plataforma {
         ArrayList<Artista> res = new ArrayList<>();
         for (Artista a : artistas.values()) if (!a.isVerificado()) res.add(a);
         return res;
+    }
+
+    public Artista buscarArtista(String nombre) {
+        return artistas.get(nombre);
     }
 
     // ====================== Álbumes / Canciones ======================
@@ -204,16 +217,22 @@ public class Plataforma {
 
     public ArrayList<Contenido> obtenerTopContenidos(int n) {
         ArrayList<Contenido> res = new ArrayList<>(catalogo);
-        // Simple placeholder: return first n
         return new ArrayList<>(res.subList(0, Math.min(n, res.size())));
-    }
-
-    public Artista buscarArtista(String nombre) {
-        return artistas.get(nombre);
     }
 
     public String obtenerEstadisticasGenerales() {
         return "Estadísticas placeholder";
+    }
+
+    // ====================== Playlists ======================
+    public Playlist crearPlaylistPublica(String nombre, UsuarioGratuito creador) {
+        Playlist p = new Playlist(nombre, creador);
+        playlistsPublicas.add(p);
+        return p;
+    }
+
+    public ArrayList<Playlist> getPlaylistsPublicas() {
+        return new ArrayList<>(playlistsPublicas);
     }
 
     // ====================== Recomendador / Anuncios ======================
