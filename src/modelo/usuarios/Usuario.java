@@ -92,19 +92,10 @@ public abstract class Usuario {
         if (password == null || password.length() < 8) {
             throw new PasswordDebilException("Password debe tener al menos 8 caracteres");
         }
-        boolean tieneNumero = false;
-        boolean tieneMayuscula = false;
-
-        for (char c : password.toCharArray()) {
-            if (Character.isDigit(c)) tieneNumero = true;
-            if (Character.isUpperCase(c)) tieneMayuscula = true;
-        }
-
-        if (!tieneNumero || !tieneMayuscula) {
-            throw new PasswordDebilException("Password debe contener al menos un número y una mayúscula");
-        }
         return true;
     }
+
+
 
     public void agregarAlHistorial(Contenido contenido) {
         if (historial.size() >= HISTORIAL_MAX) {
