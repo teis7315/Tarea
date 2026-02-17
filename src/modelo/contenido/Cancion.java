@@ -38,7 +38,7 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
         this.pausado = false;
         this.descargado = false;
         this.explicit = false;
-        this.letra = "";
+        this.letra = null;
     }
 
     public Cancion(String titulo, int duracionSegundos, modelo.artistas.Artista artista, GeneroMusical genero,
@@ -120,11 +120,13 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
     }
 
     public String obtenerLetra() throws LetraNoDisponibleException {
-        if (letra == null || letra.isEmpty()) {
+        if (letra == null || letra.isBlank()) {
+            letra = null; // aseguramos que getLetra() devuelva null
             throw new LetraNoDisponibleException("La letra no está disponible para esta canción");
         }
         return letra;
     }
+
 
     public boolean esExplicit() {
         return explicit;

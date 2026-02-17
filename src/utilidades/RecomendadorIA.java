@@ -1,6 +1,8 @@
 package utilidades;
 
 import enums.AlgoritmoRecomendacion;
+import excepciones.recomendacion.HistorialVacioException;
+import excepciones.recomendacion.ModeloNoEntrenadoException;
 import interfaces.Recomendador;
 import excepciones.recomendacion.RecomendacionException;
 import modelo.contenido.Contenido;
@@ -35,9 +37,13 @@ public class RecomendadorIA implements Recomendador {
     }
 
     @Override
-    public ArrayList<Contenido> recomendar(Usuario usuario) throws RecomendacionException {
-        if (!modeloEntrenado) throw new RecomendacionException("Modelo no entrenado");
-        if (usuario.getHistorial().isEmpty()) throw new RecomendacionException("Usuario no tiene historial suficiente");
+    public ArrayList<Contenido> recomendar(Usuario usuario)
+            throws RecomendacionException, ModeloNoEntrenadoException, HistorialVacioException {
+        if (!modeloEntrenado)
+            throw new ModeloNoEntrenadoException("El modelo de recomendación no ha sido entrenado");
+
+        if (usuario.getHistorial().isEmpty())
+            throw new HistorialVacioException("El usuario no tiene historial suficiente");
 
         ArrayList<Contenido> recomendaciones = new ArrayList<>();
         ArrayList<String> preferencias = matrizPreferencias.getOrDefault(usuario.getId(), new ArrayList<>());
@@ -50,6 +56,7 @@ public class RecomendadorIA implements Recomendador {
 
         return recomendaciones;
     }
+
 
     @Override
     public ArrayList<Contenido> obtenerSimilares(Contenido contenido) throws RecomendacionException {
@@ -115,7 +122,6 @@ public class RecomendadorIA implements Recomendador {
         return (double) coincidencias / Math.max(preferencias.size(), etiquetas.size());
     }
 
-    // ===== NUEVO MÉTODO PARA PASAR EL TEST =====
     public ArrayList<String> obtenerGenerosPopulares() {
         HashMap<String, Integer> contador = new HashMap<>();
         for (ArrayList<String> prefs : matrizPreferencias.values()) {

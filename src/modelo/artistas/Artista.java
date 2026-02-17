@@ -44,7 +44,17 @@ public class Artista {
     }
 
     public Artista(String nombreArtistico, String nombreReal, String pais, boolean verificado) {
+        this.id = UUID.randomUUID().toString();
+        this.nombreArtistico = nombreArtistico;
+        this.nombreReal = nombreReal;
+        this.paisOrigen = pais;
+        this.discografia = new ArrayList<>();
+        this.albumes = new ArrayList<>();
+        this.oyentesMensuales = 0;
+        this.verificado = verificado;
+        this.biografia = "";
     }
+
 
     public void publicarCancion(Cancion cancion) {
         if (!discografia.contains(cancion)) {

@@ -67,7 +67,25 @@ public class Playlist {
     public void ordenarPor(CriterioOrden criterio) throws PlaylistVaciaException {
         if (contenidos.isEmpty()) throw new PlaylistVaciaException("Playlist vacía");
 
+        switch (criterio) {
+            case POPULARIDAD:
+                // De mayor a menor reproducciones
+                contenidos.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
+                break;
+            case DURACION:
+                // De menor a mayor duración
+                contenidos.sort((c1, c2) -> Integer.compare(c1.getDuracionSegundos(), c2.getDuracionSegundos()));
+                break;
+            case ALFABETICO:
+                // Alfabéticamente por título
+                contenidos.sort((c1, c2) -> c1.getTitulo().compareToIgnoreCase(c2.getTitulo()));
+                break;
+            default:
+                throw new IllegalArgumentException("Criterio de orden no soportado");
+        }
     }
+
+
 
     public int getDuracionTotal() {
         int total = 0;

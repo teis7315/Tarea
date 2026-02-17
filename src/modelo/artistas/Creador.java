@@ -50,15 +50,17 @@ public class Creador {
         episodios.add(episodio);
     }
 
+
     public EstadisticasCreador obtenerEstadisticas() {
         return new EstadisticasCreador(this);
     }
 
     public void agregarRedSocial(String red, String usuario) {
         if (red != null && usuario != null) {
-            redesSociales.put(red, usuario.startsWith("@") ? usuario : "@" + usuario);
+            redesSociales.put(red.toLowerCase(), usuario.startsWith("@") ? usuario : "@" + usuario);
         }
     }
+
 
     public double calcularPromedioReproducciones() {
         if (episodios.isEmpty()) {

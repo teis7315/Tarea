@@ -1,6 +1,6 @@
 package modelo.plataforma;
-
 import enums.GeneroMusical;
+import enums.TipoAnuncion;
 import enums.TipoSuscripcion;
 import enums.CategoriaPodcast;
 import excepciones.artista.*;
@@ -45,6 +45,9 @@ public class Plataforma {
         this.anuncios = new ArrayList<>();
         this.recomendador = new RecomendadorIA();
         this.totalAnunciosReproducidos = 0;
+
+        this.anuncios.add(new Anuncio("Empresa de prueba", TipoAnuncion.AUDIO, 100.0));
+
     }
 
     // Singleton
@@ -131,10 +134,15 @@ public class Plataforma {
     }
 
     public ArrayList<Artista> getArtistasVerificados() {
-        ArrayList<Artista> res = new ArrayList<>();
-        for (Artista a : artistas.values()) if (a.isVerificado()) res.add(a);
-        return res;
+        ArrayList<Artista> verificados = new ArrayList<>();
+        for (Artista a : artistas.values()) {
+            if (a.isVerificado()) {
+                verificados.add(a);
+            }
+        }
+        return verificados;
     }
+
 
     public ArrayList<Artista> getArtistasNoVerificados() {
         ArrayList<Artista> res = new ArrayList<>();
@@ -142,16 +150,22 @@ public class Plataforma {
         return res;
     }
 
-    public Artista buscarArtista(String nombre) {
-        return artistas.get(nombre);
+    public Artista buscarArtista(String nombre) throws ArtistaNoEncontradoException {
+        Artista a = artistas.get(nombre);
+        if (a == null) {
+            throw new ArtistaNoEncontradoException("Artista '" + nombre + "' no encontrado");
+        }
+        return a;
     }
 
+
     // ====================== Álbumes / Canciones ======================
-    public Album crearAlbum(Artista artista, String nombre, Date fecha) {
-        Album album = new Album(nombre, artista, fecha);
+    public Album crearAlbum(Artista artista, String nombre, Date fecha) throws ArtistaNoVerificadoException, AlbumYaExisteException {
+        Album album = artista.crearAlbum(nombre, fecha);
         albumes.add(album);
         return album;
     }
+
 
     public void agregarContenidoCatalogo(Cancion c) {
         catalogo.add(c);
@@ -178,11 +192,20 @@ public class Plataforma {
         return new ArrayList<>(creadores.values());
     }
 
-    public Podcast crearPodcast(String nombre, int duracion, Creador creador, int episodio, int temporada, CategoriaPodcast categoria) throws DuracionInvalidaException {
+    public Podcast crearPodcast(String nombre, int duracion, Creador creador, int episodio, int temporada, CategoriaPodcast categoria)
+            throws DuracionInvalidaException, excepciones.artista.LimiteEpisodiosException {
+
         Podcast p = new Podcast(nombre, duracion, creador, episodio, temporada, categoria);
+
+        // 1. Agregar al catálogo
         catalogo.add(p);
+
+        // 2. Registrar el podcast en el creador
+        creador.publicarPodcast(p);
+
         return p;
     }
+
 
     public ArrayList<Podcast> getPodcasts() {
         ArrayList<Podcast> podcasts = new ArrayList<>();
@@ -195,19 +218,30 @@ public class Plataforma {
         return new ArrayList<>(catalogo);
     }
 
-    public ArrayList<Contenido> buscarContenido(String texto) {
+    public ArrayList<Contenido> buscarContenido(String texto) throws ContenidoNoEncontradoException {
         ArrayList<Contenido> res = new ArrayList<>();
         for (Contenido c : catalogo)
             if (c.getNombre().toLowerCase().contains(texto.toLowerCase()))
                 res.add(c);
+        if (res.isEmpty()) {
+            throw new ContenidoNoEncontradoException("No se encontró contenido para: " + texto);
+        }
         return res;
     }
 
-    public ArrayList<Cancion> buscarPorGenero(GeneroMusical genero) {
+
+    public ArrayList<Cancion> buscarPorGenero(GeneroMusical genero) throws ContenidoNoEncontradoException {
         ArrayList<Cancion> res = new ArrayList<>();
-        for (Contenido c : catalogo) if (c instanceof Cancion && ((Cancion)c).getGenero() == genero) res.add((Cancion)c);
+        for (Contenido c : catalogo)
+            if (c instanceof Cancion && ((Cancion)c).getGenero() == genero)
+                res.add((Cancion)c);
+
+        if (res.isEmpty()) {
+            throw new ContenidoNoEncontradoException("No se encontraron canciones del género: " + genero);
+        }
         return res;
     }
+
 
     public ArrayList<Podcast> buscarPorCategoria(CategoriaPodcast categoria) {
         ArrayList<Podcast> res = new ArrayList<>();
@@ -217,12 +251,25 @@ public class Plataforma {
 
     public ArrayList<Contenido> obtenerTopContenidos(int n) {
         ArrayList<Contenido> res = new ArrayList<>(catalogo);
+        res.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
         return new ArrayList<>(res.subList(0, Math.min(n, res.size())));
     }
 
+
     public String obtenerEstadisticasGenerales() {
-        return "Estadísticas placeholder";
+        int numUsuarios = usuarios.size();
+        int numContenidos = catalogo.size();
+        int numArtistas = artistas.size();
+        int numPlaylists = playlistsPublicas.size(); // corregido
+
+        return "Estadísticas de la plataforma:\n" +
+                "Usuarios registrados: " + numUsuarios + "\n" +
+                "Contenidos disponibles: " + numContenidos + "\n" +
+                "Artistas: " + numArtistas + "\n" +
+                "Playlists: " + numPlaylists;
     }
+
+
 
     // ====================== Playlists ======================
     public Playlist crearPlaylistPublica(String nombre, UsuarioGratuito creador) {

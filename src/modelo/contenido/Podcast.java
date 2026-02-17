@@ -34,7 +34,7 @@ public class Podcast extends Contenido implements Reproducible, Descargable {
         this.categoria = categoria;
         this.descripcion = "";
         this.invitados = new ArrayList<>();
-        this.transcripcion = "";
+        this.transcripcion = null;
         this.reproduciendo = false;
         this.pausado = false;
         this.descargado = false;
@@ -51,10 +51,11 @@ public class Podcast extends Contenido implements Reproducible, Descargable {
         if (!disponible) {
             throw new ContenidoNoDisponibleException("El podcast no está disponible");
         }
-        reproduciendo = true;
+        reproduciendo = false;
         pausado = false;
-        reproducciones++;
+        aumentarReproducciones();
     }
+
 
     @Override
     public void play() throws ContenidoNoDisponibleException {
