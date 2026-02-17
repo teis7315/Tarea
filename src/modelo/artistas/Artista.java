@@ -43,6 +43,9 @@ public class Artista {
         this.biografia = biografia;
     }
 
+    public Artista(String nombreArtistico, String nombreReal, String pais, boolean verificado) {
+    }
+
     public void publicarCancion(Cancion cancion) {
         if (!discografia.contains(cancion)) {
             discografia.add(cancion);

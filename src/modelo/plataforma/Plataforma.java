@@ -21,6 +21,7 @@ import java.util.HashMap;
 public class Plataforma {
     private static Plataforma instancia;
     private final String nombre;
+
     private final HashMap<String, Usuario> usuarios;
     private final HashMap<String, Usuario> usuariosPorEmail;
     private final ArrayList<Contenido> catalogo;
@@ -67,13 +68,9 @@ public class Plataforma {
         if (usuariosPorEmail.containsKey(email)) {
             throw new UsuarioYaExisteException("Email en uso");
         }
-
         UsuarioPremium u = new UsuarioPremium(nombre, email, password, tipo);
-
-        // Add only after successful creation
         usuarios.put(u.getId(), u);
         usuariosPorEmail.put(email, u);
-
         return u;
     }
 
@@ -87,13 +84,9 @@ public class Plataforma {
         if (usuariosPorEmail.containsKey(email)) {
             throw new UsuarioYaExisteException("Email en uso");
         }
-
         UsuarioGratuito u = new UsuarioGratuito(nombre, email, password);
-
-        // Add only after successful creation
         usuarios.put(u.getId(), u);
         usuariosPorEmail.put(email, u);
-
         return u;
     }
 
@@ -117,11 +110,119 @@ public class Plataforma {
         return usuariosPorEmail.get(email);
     }
 
-    public String getNombre() {
-        return "";
+    // ====================== Artistas ======================
+    public Artista registrarArtista(String nombreArtistico, String nombreReal, String pais, boolean verificado) {
+        Artista a = new Artista(nombreArtistico, nombreReal, pais, verificado);
+        artistas.put(nombreArtistico, a);
+        return a;
     }
 
-    // ====================== Artistas, Álbumes, Canciones, Creadores, Playlists, Búsquedas ======================
-    // (kept unchanged)
-    // ...
+    public ArrayList<Artista> getArtistas() {
+        return new ArrayList<>(artistas.values());
+    }
+
+    public ArrayList<Artista> getArtistasVerificados() {
+        ArrayList<Artista> res = new ArrayList<>();
+        for (Artista a : artistas.values()) if (a.isVerificado()) res.add(a);
+        return res;
+    }
+
+    public ArrayList<Artista> getArtistasNoVerificados() {
+        ArrayList<Artista> res = new ArrayList<>();
+        for (Artista a : artistas.values()) if (!a.isVerificado()) res.add(a);
+        return res;
+    }
+
+    // ====================== Álbumes / Canciones ======================
+    public Album crearAlbum(Artista artista, String nombre, Date fecha) {
+        Album album = new Album(nombre, artista, fecha);
+        albumes.add(album);
+        return album;
+    }
+
+    public void agregarContenidoCatalogo(Cancion c) {
+        catalogo.add(c);
+    }
+
+    public ArrayList<Album> getAlbumes() {
+        return new ArrayList<>(albumes);
+    }
+
+    public ArrayList<Cancion> getCanciones() {
+        ArrayList<Cancion> canciones = new ArrayList<>();
+        for (Contenido c : catalogo) if (c instanceof Cancion) canciones.add((Cancion) c);
+        return canciones;
+    }
+
+    // ====================== Creadores / Podcasts ======================
+    public Creador registrarCreador(String nombreCanal, String nombreReal, String descripcion) {
+        Creador c = new Creador(nombreCanal, nombreReal, descripcion);
+        creadores.put(nombreCanal, c);
+        return c;
+    }
+
+    public ArrayList<Creador> getTodosLosCreadores() {
+        return new ArrayList<>(creadores.values());
+    }
+
+    public Podcast crearPodcast(String nombre, int duracion, Creador creador, int episodio, int temporada, CategoriaPodcast categoria) throws DuracionInvalidaException {
+        Podcast p = new Podcast(nombre, duracion, creador, episodio, temporada, categoria);
+        catalogo.add(p);
+        return p;
+    }
+
+    public ArrayList<Podcast> getPodcasts() {
+        ArrayList<Podcast> podcasts = new ArrayList<>();
+        for (Contenido c : catalogo) if (c instanceof Podcast) podcasts.add((Podcast) c);
+        return podcasts;
+    }
+
+    // ====================== Catálogo / Búsquedas / Estadísticas ======================
+    public ArrayList<Contenido> getCatalogo() {
+        return new ArrayList<>(catalogo);
+    }
+
+    public ArrayList<Contenido> buscarContenido(String texto) {
+        ArrayList<Contenido> res = new ArrayList<>();
+        for (Contenido c : catalogo)
+            if (c.getNombre().toLowerCase().contains(texto.toLowerCase()))
+                res.add(c);
+        return res;
+    }
+
+    public ArrayList<Cancion> buscarPorGenero(GeneroMusical genero) {
+        ArrayList<Cancion> res = new ArrayList<>();
+        for (Contenido c : catalogo) if (c instanceof Cancion && ((Cancion)c).getGenero() == genero) res.add((Cancion)c);
+        return res;
+    }
+
+    public ArrayList<Podcast> buscarPorCategoria(CategoriaPodcast categoria) {
+        ArrayList<Podcast> res = new ArrayList<>();
+        for (Contenido c : catalogo) if (c instanceof Podcast && ((Podcast)c).getCategoria() == categoria) res.add((Podcast)c);
+        return res;
+    }
+
+    public ArrayList<Contenido> obtenerTopContenidos(int n) {
+        ArrayList<Contenido> res = new ArrayList<>(catalogo);
+        // Simple placeholder: return first n
+        return new ArrayList<>(res.subList(0, Math.min(n, res.size())));
+    }
+
+    public Artista buscarArtista(String nombre) {
+        return artistas.get(nombre);
+    }
+
+    public String obtenerEstadisticasGenerales() {
+        return "Estadísticas placeholder";
+    }
+
+    // ====================== Recomendador / Anuncios ======================
+    public RecomendadorIA getRecomendador() {
+        return recomendador;
+    }
+
+    public Anuncio obtenerAnuncioAleatorio() {
+        if (anuncios.isEmpty()) return null;
+        return anuncios.get(0); // simple placeholder
+    }
 }

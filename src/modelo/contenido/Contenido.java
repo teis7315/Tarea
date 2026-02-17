@@ -132,4 +132,8 @@ public abstract class Contenido {
     public ArrayList<String> getEtiquetas() {
         return new ArrayList<>(tags); // copia defensiva
     }
+
+    public String getNombre() {
+        return titulo;
+    }
 }
