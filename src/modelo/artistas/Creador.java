@@ -56,13 +56,13 @@ public class Creador {
 
     public void agregarRedSocial(String red, String usuario) {
         if (red != null && usuario != null) {
-            redesSociales.put(red, usuario);
+            redesSociales.put(red, usuario.startsWith("@") ? usuario : "@" + usuario);
         }
     }
 
     public double calcularPromedioReproducciones() {
         if (episodios.isEmpty()) {
-            return Double.NaN; // corregido para pasar test
+            return 0.0; // corregido para pasar test
         }
         int total = 0;
         for (Podcast p : episodios) {
@@ -118,57 +118,19 @@ public class Creador {
     }
 
     // Getters y Setters
-    public String getId() {
-        return id;
-    }
-
-    public String getNombreCanal() {
-        return nombreCanal;
-    }
-
-    public void setNombreCanal(String nombreCanal) {
-        this.nombreCanal = nombreCanal;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public ArrayList<Podcast> getEpisodios() {
-        return new ArrayList<>(episodios);
-    }
-
-    public int getSuscriptores() {
-        return suscriptores;
-    }
-
-    public void setSuscriptores(int suscriptores) {
-        this.suscriptores = suscriptores;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public HashMap<String, String> getRedesSociales() {
-        return new HashMap<>(redesSociales);
-    }
-
-    public ArrayList<CategoriaPodcast> getCategoriasPrincipales() {
-        return new ArrayList<>(categoriasPrincipales);
-    }
-
-    public int getNumEpisodios() {
-        return episodios.size();
-    }
+    public String getId() { return id; }
+    public String getNombreCanal() { return nombreCanal; }
+    public void setNombreCanal(String nombreCanal) { this.nombreCanal = nombreCanal; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public ArrayList<Podcast> getEpisodios() { return new ArrayList<>(episodios); }
+    public int getSuscriptores() { return suscriptores; }
+    public void setSuscriptores(int suscriptores) { this.suscriptores = suscriptores; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public HashMap<String, String> getRedesSociales() { return new HashMap<>(redesSociales); }
+    public ArrayList<CategoriaPodcast> getCategoriasPrincipales() { return new ArrayList<>(categoriasPrincipales); }
+    public int getNumEpisodios() { return episodios.size(); }
 
     @Override
     public String toString() {

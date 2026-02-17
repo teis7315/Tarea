@@ -44,9 +44,7 @@ public abstract class Usuario {
         if (!validarEmail()) {
             throw new EmailInvalidoException("Email inválido: " + email);
         }
-        if (!validarPassword()) {
-            throw new PasswordDebilException("Password muy débil. Requiere al menos 8 caracteres, mayúscula y número");
-        }
+        validarPassword(); // Throws PasswordDebilException if weak
     }
 
     public abstract void reproducir(Contenido contenido)
@@ -94,8 +92,13 @@ public abstract class Usuario {
         if (password == null || password.length() < 8) {
             throw new PasswordDebilException("Password debe tener al menos 8 caracteres");
         }
-        boolean tieneNumero = password.matches(".*\\d.*");
-        boolean tieneMayuscula = password.matches(".*[A-Z].*");
+        boolean tieneNumero = false;
+        boolean tieneMayuscula = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) tieneNumero = true;
+            if (Character.isUpperCase(c)) tieneMayuscula = true;
+        }
 
         if (!tieneNumero || !tieneMayuscula) {
             throw new PasswordDebilException("Password debe contener al menos un número y una mayúscula");
@@ -151,10 +154,7 @@ public abstract class Usuario {
     public void setPassword(String password) throws PasswordDebilException {
         String oldPassword = this.password;
         this.password = password;
-        if (!validarPassword()) {
-            this.password = oldPassword;
-            throw new PasswordDebilException("Password inválida");
-        }
+        validarPassword();
     }
 
     public TipoSuscripcion getSuscripcion() {
