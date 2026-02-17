@@ -122,71 +122,33 @@ public class Album {
         return total;
     }
 
+    // ===== Nuevo método corregido para pasar tests =====
+    public Cancion agregarCancion(String titulo, int duracion, Artista artista, GeneroMusical genero)
+            throws AlbumCompletoException, DuracionInvalidaException {
+        return crearCancion(titulo, duracion, genero);
+    }
+
     // Getters y Setters
-    public String getId() {
-        return id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public Artista getArtista() {
-        return artista;
-    }
-
-    public void setArtista(Artista artista) {
-        this.artista = artista;
-    }
-
-    public Date getFechaLanzamiento() {
-        return fechaLanzamiento;
-    }
-
-    public void setFechaLanzamiento(Date fechaLanzamiento) {
-        this.fechaLanzamiento = fechaLanzamiento;
-    }
-
-    public ArrayList<Cancion> getCanciones() {
-        return new ArrayList<>(canciones);
-    }
-
-    public String getPortadaURL() {
-        return portadaURL;
-    }
-
-    public void setPortadaURL(String portadaURL) {
-        this.portadaURL = portadaURL;
-    }
-
-    public String getDiscografica() {
-        return discografica;
-    }
-
-    public void setDiscografica(String discografica) {
-        this.discografica = discografica;
-    }
-
-    public String getTipoAlbum() {
-        return tipoAlbum;
-    }
-
-    public void setTipoAlbum(String tipoAlbum) {
-        this.tipoAlbum = tipoAlbum;
-    }
-
-    public int getMaxCanciones() {
-        return MAX_CANCIONES;
-    }
+    public String getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public Artista getArtista() { return artista; }
+    public void setArtista(Artista artista) { this.artista = artista; }
+    public Date getFechaLanzamiento() { return fechaLanzamiento; }
+    public void setFechaLanzamiento(Date fechaLanzamiento) { this.fechaLanzamiento = fechaLanzamiento; }
+    public ArrayList<Cancion> getCanciones() { return new ArrayList<>(canciones); }
+    public String getPortadaURL() { return portadaURL; }
+    public void setPortadaURL(String portadaURL) { this.portadaURL = portadaURL; }
+    public String getDiscografica() { return discografica; }
+    public void setDiscografica(String discografica) { this.discografica = discografica; }
+    public String getTipoAlbum() { return tipoAlbum; }
+    public void setTipoAlbum(String tipoAlbum) { this.tipoAlbum = tipoAlbum; }
+    public int getMaxCanciones() { return MAX_CANCIONES; }
 
     @Override
     public String toString() {
         return "Album{" + "titulo='" + titulo + '\'' + ", artista=" + artista.getNombreArtistico() +
-               ", numCanciones=" + canciones.size() + '}';
+                ", numCanciones=" + canciones.size() + '}';
     }
 
     @Override
@@ -200,8 +162,5 @@ public class Album {
     @Override
     public int hashCode() {
         return id.hashCode();
-    }
-
-    public Cancion agregarCancion(String titulo, int duracion, Artista artista, GeneroMusical genero) {
     }
 }
